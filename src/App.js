@@ -1,25 +1,48 @@
-import logo from './logo.svg';
 import './App.css';
-
+import Axios from 'axios';
+import React, {useState} from 'react';
+import CurrentMosam from './components/CurrentMosam/CurrentMosam';
+import HourlyMosam from './components/HourlyMosam/HourlyMosam';
 function App() {
-  return (
+  const [Location, setLocation] = useState("Chanderi");
+  const [Mosam, setMosam] = useState(35);
+ 
+  
+  const searchWeather = () => {
+    const options = {
+      method: 'GET',
+      url: 'https://community-open-weather-map.p.rapidapi.com/weather',
+      params: {
+        q: Location,
+      },
+      headers: {
+        'X-RapidAPI-Host': 'community-open-weather-map.p.rapidapi.com',
+        'X-RapidAPI-Key': 'cb1730cddbmsh5ccee3275171581p101c1ajsn89456d2322f4'
+      }
+    };
+    Axios.request(options).then(function (response) {
+      setMosam((response.data.main.temp - 273.15).toFixed(1));
+      console.log(response.data.main);
+    }).catch(function (error) {
+      console.error(error);
+    });
+  }
+  return (<>
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div>
+      <input className='input' onChange={(e) => setLocation(e.target.value)}/>
+      <button className='but_search' onClick={searchWeather}> Search</button>
+      </div>
+      <div className='div_text'>
+        <CurrentMosam Location={Location} Mosam={Mosam}/>
+      </div>
+      <div>
+        <HourlyMosam />
+      </div>
     </div>
-  );
+        
+    </> );
+  
 }
 
 export default App;
