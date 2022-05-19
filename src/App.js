@@ -1,12 +1,12 @@
 import './App.css';
 import Axios from 'axios';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import CurrentMosam from './components/CurrentMosam/CurrentMosam';
 import HourlyMosam from './components/HourlyMosam/HourlyMosam';
 function App() {
   const [Location, setLocation] = useState("Chanderi");
   const [Mosam, setMosam] = useState(35);
- 
+  const [IsSearched, setIsSearched] = useState(false);
   
   const searchWeather = () => {
     const options = {
@@ -22,10 +22,12 @@ function App() {
     };
     Axios.request(options).then(function (response) {
       setMosam((response.data.main.temp - 273.15).toFixed(1));
-      console.log(response.data.main);
+      console.log(response.data);
     }).catch(function (error) {
       console.error(error);
     });
+    {console.log(IsSearched)}
+    setIsSearched(true)
   }
   return (<>
     <div className="App">
@@ -34,10 +36,10 @@ function App() {
       <button className='but_search' onClick={searchWeather}> Search</button>
       </div>
       <div className='div_text'>
-        <CurrentMosam Location={Location} Mosam={Mosam}/>
-      </div>
+        {(IsSearched ? <CurrentMosam Location={Location} Mosam={Mosam}/> : 'Enter the City')}
+        </div>
       <div>
-        <HourlyMosam />
+        <HourlyMosam Location={Location} Mosam={Mosam} IsSearched={IsSearched}/>
       </div>
     </div>
         
